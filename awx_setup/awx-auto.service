@@ -1,0 +1,14 @@
+# File: /etc/systemd/system/awx-auto.service
+
+[Unit]
+Description=Automatically configure AWX on instance boot
+Requires=network-online.target k3s.service
+After=network-online.target k3s.service
+
+[Service]
+Type=oneshot
+ExecStart=/home/ubuntu/awx_setup/start.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
