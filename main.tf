@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/tls"
       version = "~> 4.0"
     }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
   }
   required_version = ">= 1.8"
 }
@@ -19,16 +23,8 @@ provider "aws" {
   token      = var.aws_access_token
 }
 
-# Data sources for VPC & Subnets
 data "aws_vpc" "default" {
   default = true
-}
-
-data "aws_subnets" "default" {
-  filter {
-    name   = "tag:Name"
-    values = ["default"]
-  }
 }
 
 # Lookup Ubuntu AMI automatically
@@ -102,9 +98,23 @@ resource "aws_key_pair" "awx_server_key_pair" {
   public_key = tls_private_key.awx_server_tls_private_key.public_key_openssh
 }
 
+# Save that private key into a file on local
+resource "local_file" "private_key" {
+  content  = tls_private_key.awx_server_tls_private_key.private_key_pem
+  filename = "${path.module}/my_awx_private_key.pem"
+  file_permission = "0400"
+}
+
+data "aws_subnets" "subnets" {
+  filter {
+    name = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
 # Launch the AWX Server
 resource "aws_instance" "awx_server" {
-  subnet_id                   = data.aws_subnets.default.ids
+  subnet_id                   = data.aws_subnets.subnets.ids[0]
   instance_type               = var.awx_server_ec2_type
   vpc_security_group_ids      = [aws_security_group.awx_server_sg.id]
   ami                         = data.aws_ami.ubuntu_ami.id
@@ -119,8 +129,8 @@ resource "aws_instance" "awx_server" {
 
   # 1) Copy the entire awx_setup folder to the instance
   provisioner "file" {
-    source      = "${path.module}/awx_setup/"
-    destination = "/home/ubuntu/awx_setup/"
+    source      = "${path.module}/awx_setup"
+    destination = "/home/ubuntu"
 
     connection {
       type = "ssh"
@@ -145,11 +155,11 @@ resource "aws_instance" "awx_server" {
       "sudo cp /home/ubuntu/awx_setup/awx-auto.service /etc/systemd/system/awx-auto.service",
       "sudo chmod 644 /etc/systemd/system/awx-auto.service",
 
-      # Reload systemd
-      "sudo systemctl daemon-reload",
-
       # Enable the service to run on boot
       "sudo systemctl enable awx-auto.service",
+
+      # Reload systemd
+      "sudo systemctl daemon-reload",
 
       # Start the service immediately
       "sudo systemctl start awx-auto.service"

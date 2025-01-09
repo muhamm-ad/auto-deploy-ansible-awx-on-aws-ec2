@@ -4,8 +4,6 @@ This repository aims to **simplify** the deployment of [Ansible AWX](https://git
 instance**. It leverages **Terraform** to provision infrastructure and **shell scripts** to automate the installation of
 a minimal [K3s](https://k3s.io/) cluster and AWX via the [AWX Operator](https://github.com/ansible/awx-operator).
 
----
-
 ## Overview
 
 - **Goal**: Quickly spin up a fully functional AWX server with minimal manual intervention.
@@ -18,21 +16,13 @@ a minimal [K3s](https://k3s.io/) cluster and AWX via the [AWX Operator](https://
 
 Using this repository, you avoid most manual steps and can focus on managing your Ansible playbooks in AWX.
 
----
-
 ## Prerequisites
 
 Before proceeding, ensure the following requirements are met:
 
 - **Terraform**: Version 1.8 or later installed. [Download Terraform here](https://www.terraform.io/downloads.html).
-- **AWS Account**: With credentials (access key and secret key) for a user having sufficient permissions for managing
-  resources. Required permissions are detailed in the [aws_tf_user_permissions.json](aws_tf_user_permissions.json).
-    - **Note**: The provided policy is a generic resource policy allowing actions on all regions and accounts. You can
-      restrict it by specifying specific regions, accounts, or resource counts. For more details on restricting AWS
-      policies, refer
-      to [IAM Policy Best Practices](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html).
-
----
+- **AWS Account**: With credentials (access key and secret key) for a user having sufficient permissions for managing EC2
+  resources.
 
 ## Usage
 
@@ -86,9 +76,9 @@ Before proceeding, ensure the following requirements are met:
   ```bash
   ssh -i <path_to_private_key> ubuntu@<public_ip_or_dns>
   ```
-  This allows you to check logs, pods, etc. within the instance. Refer to
-  the [AWX Operator documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/installation/basic-install.html)
-  for more details.
+  - This allows you to check logs, pods, etc. within the instance. 
+  - After deployment, you should wait about 5 minutes for the AWX Operator to finish deploying the AWX server.
+  - Refer to the [AWX Operator documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/installation/basic-install.html) for more details.
 
 - **AWX Access**
     - The AWX Operator creates an ingress route at your instance’s public DNS name.
@@ -98,8 +88,6 @@ Before proceeding, ensure the following requirements are met:
         -o jsonpath="{.data.password}" | base64 --decode
       ```
     - Visit `http://<public-hostname>` (or `https://<public-hostname>` if you add TLS) to log in.
-
----
 
 ## Cleaning Up
 
@@ -111,8 +99,6 @@ terraform destroy
 
 This tears down the EC2 instance, security group, and key pair. Any data stored on the instance (including AWX data)
 will be lost.
-
----
 
 ## Starting and Stopping the AWX Server
 
@@ -142,8 +128,6 @@ with the necessary permissions to start/stop your EC2 instance.
   ```
   You can filter the output to only retrieve specific details like the public IP.
 
----
-
 ## Next Steps
 
 - **TLS**: Integrate [Let’s Encrypt](https://letsencrypt.org/) or [cert-manager](https://cert-manager.io/) for a
@@ -155,7 +139,3 @@ with the necessary permissions to start/stop your EC2 instance.
 ## LICENSE
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-**Enjoy your simplified AWX deployment on AWS EC2!**
