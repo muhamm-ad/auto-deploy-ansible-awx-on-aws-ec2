@@ -79,7 +79,11 @@ Before proceeding, ensure the following requirements are met:
   ssh -i <path_to_private_key> ubuntu@<public_ip_or_dns>
   ```
     - This allows you to check logs, pods, etc. within the instance.
-    - After deployment, you should wait about 5 minutes for the AWX Operator to finish deploying the AWX server.
+    - After deployment, you should wait about 5 minutes for the AWX Operator to finish deploying the AWX server. To
+      check the logs of the AWX Operator:
+      ```bash
+      kubectl logs -f deployments/awx-operator-controller-manager -c awx-manager
+      ```
     - Refer to
       the [AWX Operator documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/installation/basic-install.html)
       for more details.
