@@ -145,11 +145,11 @@ resource "aws_instance" "awx_server" {
   provisioner "remote-exec" {
     inline = [
       # Making sure the scripts are executable
-      "sudo chmod +x /home/ubuntu/awx_setup/install.sh",
-      "sudo chmod +x /home/ubuntu/awx_setup/start.sh",
+      "sudo chmod u+x /home/ubuntu/awx_setup/install.sh",
+      "sudo chmod u+x /home/ubuntu/awx_setup/start.sh",
 
       # Run the install script
-      "sudo /home/ubuntu/awx_setup/install.sh",
+      "/home/ubuntu/awx_setup/install.sh",
 
       # Copy service file to systemd directory
       "sudo cp /home/ubuntu/awx_setup/awx-auto.service /etc/systemd/system/awx-auto.service",

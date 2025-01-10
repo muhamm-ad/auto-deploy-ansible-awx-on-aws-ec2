@@ -20,14 +20,13 @@ metadata:
   name: awx
 spec:
   ingress_type: ingress
-  ingress_annotations: |
-    kubernetes.io/ingress.class: "nginx"
-    environment: testing
   ingress_hosts:
     - hostname: "$PUBLIC_HOSTNAME"
 EOF
 
+echo "Generated AWX configuration"
+
 # Apply the configuration
 cd /home/ubuntu/awx_setup
+/usr/local/bin/kustomize build . | kubectl apply -f - 2>&1 | tee /home/ubuntu/awx_setup/awx_install.log
 /usr/local/bin/kustomize build . | kubectl apply -f -
-

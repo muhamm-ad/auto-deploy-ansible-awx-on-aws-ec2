@@ -21,8 +21,10 @@ Using this repository, you avoid most manual steps and can focus on managing you
 Before proceeding, ensure the following requirements are met:
 
 - **Terraform**: Version 1.8 or later installed. [Download Terraform here](https://www.terraform.io/downloads.html).
-- **AWS Account**: With credentials (access key and secret key) for a user having sufficient permissions for managing EC2
-  resources.
+- **AWS Account**: With credentials (access key and secret key) for a user having sufficient permissions for managing
+  EC2 resources.
+- Ensure the **default VPC** in your AWS account is available in the region you specify ans dns resolution and dns
+  hostnames are enabled in the VPC.
 
 ## Usage
 
@@ -76,9 +78,11 @@ Before proceeding, ensure the following requirements are met:
   ```bash
   ssh -i <path_to_private_key> ubuntu@<public_ip_or_dns>
   ```
-  - This allows you to check logs, pods, etc. within the instance. 
-  - After deployment, you should wait about 5 minutes for the AWX Operator to finish deploying the AWX server.
-  - Refer to the [AWX Operator documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/installation/basic-install.html) for more details.
+    - This allows you to check logs, pods, etc. within the instance.
+    - After deployment, you should wait about 5 minutes for the AWX Operator to finish deploying the AWX server.
+    - Refer to
+      the [AWX Operator documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/installation/basic-install.html)
+      for more details.
 
 - **AWX Access**
     - The AWX Operator creates an ingress route at your instance’s public DNS name.
