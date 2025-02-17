@@ -82,7 +82,7 @@ Before proceeding, ensure the following requirements are met:
     - After deployment, you should wait about 5 minutes for the AWX Operator to finish deploying the AWX server. To
       check the logs of the AWX Operator:
       ```bash
-      kubectl logs -f deployments/awx-operator-controller-manager -c awx-manager
+      kubectl logs -f deployments/awx-operator-controller-manager -c awx-manager -n awx
       ```
     - Refer to
       the [AWX Operator documentation](https://ansible.readthedocs.io/projects/awx-operator/en/latest/installation/basic-install.html)
@@ -92,8 +92,7 @@ Before proceeding, ensure the following requirements are met:
     - The AWX Operator creates an ingress route at your instance’s public DNS name.
     - To retrieve the **AWX admin password** (username: `admin` by default):
       ```bash
-      sudo k3s kubectl get secret awx-admin-password -n awx \
-        -o jsonpath="{.data.password}" | base64 --decode
+      kubectl get secret awx-admin-password -n awx -o jsonpath="{.data.password}" | base64 --decode
       ```
     - Visit `http://<public-hostname>` (or `https://<public-hostname>` if you add TLS) to log in.
 
